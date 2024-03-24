@@ -1,17 +1,23 @@
 import json
 from sqlalchemy import and_
+from sqlalchemy.exc import SQLAlchemyError
 from models import Device, Device_Group, Device_Group_Relationship, Device_Password_Token, Device_Status, Base
 from sqlalchemy.orm import sessionmaker
 from snowflake import SnowflakeGenerator
-import time  # 获取时间戳，填充 created_time 和 last_updated_time
+import time
 from sanic import Sanic, response
 import re
 from logger_config import logger
 from db_config import engine
 from utils import generate_random_key, hash_salt_password, random, string
+from secure_token_manager import SecureTokenManager  # 假设你有一个处理令牌的类
 
-# 在指定引擎上创建元数据中定义的所有表
-Base.metadata.create_all(engine)
+# 异常处理：尝试在指定的引擎上创建元数据中定义的所有表
+try:
+    Base.metadata.create_all(engine)
+    logger.info("数据库表创建成功")
+except SQLAlchemyError as e:
+    logger.error(f"数据库表创建失败: {e}")
 
 # 雪花算法ID生成器，机器ID设置为 1
 gen = SnowflakeGenerator(1)
@@ -19,6 +25,11 @@ gen = SnowflakeGenerator(1)
 app = Sanic("CloudDM")
 # JSON 形式输出异常
 app.config.FALLBACK_ERROR_FORMAT = "json"
+
+#still in develop
+# 使用专门的类来管理令牌和设备状态
+token_manager = SecureTokenManager()
+device_manager = DeviceManager()  # 假设你有一个处理设备心跳和映射的类
 
 token_list = []
 # 在 echo 函数外部定义一个字典用于存储设备的最后一次心跳时间
