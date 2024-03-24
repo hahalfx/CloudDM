@@ -1,0 +1,6 @@
+sanic
+requests
+sqlalchemy
+snowflake-id
+pymysql
+mysql-connector-python
