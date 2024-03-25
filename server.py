@@ -6,6 +6,8 @@ from sqlalchemy.orm import sessionmaker
 from snowflake import SnowflakeGenerator
 import time
 from sanic import Sanic, response
+from sanic.request import Request
+from sanic.response import json as json_response
 import re
 from logger_config import logger
 from db_config import engine
@@ -29,9 +31,8 @@ app.config.FALLBACK_ERROR_FORMAT = "json"
 #still in develop
 # 使用专门的类来管理令牌和设备状态
 token_manager = SecureTokenManager()
-device_manager = DeviceManager()  # 假设你有一个处理设备心跳和映射的类
 
-token_list = []
+#token_list = []
 # 在 echo 函数外部定义一个字典用于存储设备的最后一次心跳时间
 device_last_heartbeat = {}
 device_ws_mapping = {}
@@ -56,13 +57,19 @@ def handle_exception(session, e):
     return send_http_resp(0, str(e))
 
 
-async def authenticate_ws(request):
+async def authenticate_ws(request: Request):
     match = re.search(r'auth=(\w+)', request.url)
     if match:
         token = match.group(1)
-        if token in token_list:
-            return True
-    return False
+        # 使用 Token 管理器来验证 Token
+        device_id = token_manager.validate_token(token)
+        if device_id:
+            return True  # 认证成功
+        else:
+            # 认证失败，可以返回错误信息或者做相应的日志记录
+            return json_response({"error": "Invalid or expired token"}, status=401)
+    # 如果 URL 中没有 token
+    return json_response({"error": "Authentication token required"}, status=401)
 
 
 async def handle_heartbeat(ws, heartbeat_data):
@@ -303,7 +310,12 @@ async def add_devices(request):
         created_time = int(time.time() * 1000)  # 当前时间戳
         last_updated_time = int(time.time() * 1000)  # 当前时间戳
         password = generate_random_key(random.randint(16, 25))
-        token = "".join([random.choice(string.ascii_letters + string.digits) for _ in range(8)])
+        #原token生成方式
+        #token = "".join([random.choice(string.ascii_letters + string.digits) for _ in range(8)])
+        
+        #新token生成方式
+        token = token_manager.generate_token(device_id)
+
         salt, hashed_password = hash_salt_password(password)
         device = Device(
             id=str(device_id),
@@ -567,38 +579,48 @@ async def send_command(request):
     return response.json({"status": 1, "message": "Command sent successfully"})
 
 
-# 修改 echo 函数
 @app.websocket("/echo")
 async def echo(request, ws):
-    del token_list[-1]
+    # 假设 authenticate_ws 已经在握手阶段被调用并验证了 token
+    authenticated = await authenticate_ws(request)
+    if not authenticated:
+        await ws.close(reason="Authentication failed")
+        return
+
     while True:
         biz_data = await ws.recv()
         try:
             biz_dict = json.loads(biz_data)
         except ValueError:
-            logger.info("业务字符串不是 JSON 字符串")
-            await send_ws_resp(ws, "ERROR", "业务字符串不是 JSON 字符串")
+            logger.info("Received data is not a valid JSON string")
+            await send_ws_resp(ws, "ERROR", "Received data is not a valid JSON string")
             continue
 
-        # 判断是否是心跳消息
-        if "method" in biz_dict and biz_dict["method"] == "HEARTBEAT" and "data" in biz_dict:
+        # Process heartbeat message
+        if biz_dict.get("method") == "HEARTBEAT" and "data" in biz_dict:
             await handle_heartbeat(ws, biz_dict["data"])
         else:
-            logger.info("请求错误，请检查请求字段")
-            await send_ws_resp(ws, "ERROR", "请求错误，请检查请求字段")
-
+            logger.info("Invalid request, please check the request fields")
+            await send_ws_resp(ws, "ERROR", "Invalid request, please check the request fields")
 
 # 南向身份验证
 @app.post("/auth")
 async def auth(request):
+    session = app.ctx.db.session()
     try:
         data = request.json
         device_id = data.get("id")
         password = data.get("password")
-        device = app.ctx.db.query(Device_Password_Token).filter_by(id=device_id)
+
+        device = session.query(Device_Password_Token).filter(Device_Password_Token.id == device_id).first()
+        if not device:
+            return send_http_resp(0, "设备未找到")
+
+        # 确保 device.salt 和 device.password 存在，并正确使用它们进行密码验证
         if hash_salt_password(password, device.salt)[1] != device.password:
-            return send_http_resp(1, "密码错误")
-        token_list.append(device.token)
+            return send_http_resp(0, "密码错误")
+
+        #token_list.append(device.token)
         return send_http_resp(1, "验证成功", {"token": device.token})
     except Exception as e:
         return handle_exception(app.ctx.db, e)
