@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: root # 设置数据库用户
       POSTGRES_PASSWORD: 123456 # 设置数据库用户密码
     ports:
-      - "5432:5432" # 映射端口，左边是宿主机端口，右边是容器内部端口，PostgreSQL 默认端口是 5432
+      - "5432:5432" # 映射端口
 
   CloudDM:
     image: CloudDM # CloudDM 镜像名，确保已经构建或存在于某个可访问的 Docker registry 中
