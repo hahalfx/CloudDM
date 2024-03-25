@@ -1,0 +1,18 @@
+version: '3' # Docker Compose 文件版本
+
+services:
+  postgresdb:
+    image: postgres # 使用官方 PostgreSQL 镜像
+    environment:
+      POSTGRES_DB: device_management_db # 设置数据库名称
+      POSTGRES_USER: root # 设置数据库用户
+      POSTGRES_PASSWORD: 123456 # 设置数据库用户密码
+    ports:
+      - "5432:5432" # 映射端口，左边是宿主机端口，右边是容器内部端口，PostgreSQL 默认端口是 5432
+
+  CloudDM:
+    image: CloudDM # CloudDM 镜像名，确保已经构建或存在于某个可访问的 Docker registry 中
+    depends_on:
+      - postgresdb # CloudDM 依赖于 postgresdb 服务
+    ports:
+      - "8000:8000" # 如果 CloudDM 应用监听在 8000 端口，确保映射这个端口以便外部访问

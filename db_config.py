@@ -5,13 +5,17 @@ metadata = MetaData()
 # 数据库配置设置
 db_config = {
     'host': 'localhost',
-    'port': 3306,
+    'port': 5432,
     'user': 'root',
     'password': '123456',
-    'db': 'db_device_management'
+    'db': 'device_management_db'
 }
 # 使用配置创建数据库 URL
-database_url = f"mysql+mysqlconnector://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['db']}"
+#database_url = f"mysql+mysqlconnector://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['db']}"
 # 使用指定的数据库 URL 创建 SQLAlchemy 引擎
-engine = create_engine(database_url)
+#engine = create_engine(database_url)
 # 在指定引擎上创建元数据中定义的所有表
+
+#使用postgres作为数据库
+database_url = f"postgresql://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['db']}"
+engine = create_engine('postgresql://username:password@host/dbname')
