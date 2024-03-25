@@ -1,4 +1,4 @@
-version: '3' # Docker Compose 文件版本
+version: '3' 
 
 services:
   postgresdb:
@@ -15,4 +15,4 @@ services:
     depends_on:
       - postgresdb # CloudDM 依赖于 postgresdb 服务
     ports:
-      - "8000:8000" # 如果 CloudDM 应用监听在 8000 端口，确保映射这个端口以便外部访问
+      - "8000:8000" 
