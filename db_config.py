@@ -6,8 +6,8 @@ metadata = MetaData()
 db_config = {
     'host': 'localhost',
     'port': 5432,
-    'user': 'root',
-    'password': '123456',
+    'user': 'postgres',
+    'password': 'zczc@8888',
     'db': 'device_management_db'
 }
 # 使用配置创建数据库 URL

@@ -22,7 +22,9 @@ except SQLAlchemyError as e:
     logger.error(f"数据库表创建失败: {e}")
 
 # 雪花算法ID生成器，机器ID设置为 1
-gen = SnowflakeGenerator(1)
+#gen = SnowflakeGenerator(1)
+idgenerator = SnowflakeGenerator(datacenter_id=1, worker_id=1)
+
 # 创建 Sanic 应用
 app = Sanic("CloudDM")
 # JSON 形式输出异常
@@ -30,7 +32,10 @@ app.config.FALLBACK_ERROR_FORMAT = "json"
 
 #still in develop
 # 使用专门的类来管理令牌和设备状态
-token_manager = SecureTokenManager()
+Session = sessionmaker(bind=engine)
+db_session = Session()
+token_manager = SecureTokenManager(db_session=db_session)
+
 
 #token_list = []
 # 在 echo 函数外部定义一个字典用于存储设备的最后一次心跳时间
@@ -306,7 +311,7 @@ async def is_device_in_group(request):
 async def add_devices(request):
     try:
         data = request.json
-        device_id = next(gen)
+        device_id = idgenerator.next_id()
         created_time = int(time.time() * 1000)  # 当前时间戳
         last_updated_time = int(time.time() * 1000)  # 当前时间戳
         password = generate_random_key(random.randint(16, 25))
@@ -356,7 +361,7 @@ async def add_devices(request):
 async def add_device_groups(request):
     try:
         data = request.json
-        group_id = next(gen)
+        group_id = idgenerator.next_id()
         group = Device_Group(
             group_id=str(group_id),
             group_name=data.get("group_name"),
@@ -385,7 +390,7 @@ async def add_device_group_relationship(request):
         if not group:
             return send_http_resp(0, "设备分组id不存在")
         relationship = Device_Group_Relationship(
-            relationship_id=next(gen),
+            relationship_id = idgenerator.next_id(),
             id=device_id,
             group_id=group_id,
             created_time=int(time.time() * 1000),
@@ -606,7 +611,8 @@ async def echo(request, ws):
 # 南向身份验证
 @app.post("/auth")
 async def auth(request):
-    session = app.ctx.db.session()
+    #session = app.ctx.db.session()
+    session = db_session
     try:
         data = request.json
         device_id = data.get("id")

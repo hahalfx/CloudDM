@@ -1,0 +1,66 @@
+[2024-03-26 11:29:36,635] [ERROR] 数据库表创建失败: (psycopg2.OperationalError) could not translate host name "host" to address: nodename nor servname provided, or not known
+
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+[2024-03-26 11:35:41,214] [ERROR] 数据库表创建失败: (psycopg2.OperationalError) could not translate host name "host" to address: nodename nor servname provided, or not known
+
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+[2024-03-26 11:35:41,289] [INFO] 
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                          Sanic v23.3.0                          │
+  │                 Goin' Fast @ http://0.0.0.0:8000                │
+  ├───────────────────────┬─────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │     mode: production, single worker     │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │   server: sanic, HTTP/1.1               │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │   python: 3.10.9                        │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │ platform: macOS-10.16-x86_64-i386-64bit │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │ packages: sanic-routing==22.8.0         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │                                         │
+  │ [48;2;255;13;104m                     [0m │                                         │
+  │ Build Fast. Run Fast. │                                         │
+  └───────────────────────┴─────────────────────────────────────────┘
+
+[2024-03-26 11:35:41,289] [WARNING] [01;33mSanic is running in PRODUCTION mode. Consider using '--debug' or '--dev' while actively developing your application.[0m
+[2024-03-26 11:35:41,321] [INFO] Starting worker [13219]
+[2024-03-26 11:37:39,599] [INFO] [srv] [resp] (GET /v1/devices) {'description': 'Bad Request', 'status': 400, 'message': 'Failed when parsing body as json'}
+[2024-03-26 11:38:52,073] [INFO] [srv] [req] (GET /auth) 
+[2024-03-26 11:38:52,074] [INFO] [srv] [resp] (GET /auth) {'description': 'Method Not Allowed', 'status': 405, 'message': 'Method GET not allowed for URL /auth'}
+[2024-03-26 11:39:03,027] [INFO] [srv] [resp] (POST /auth) {'description': 'Bad Request', 'status': 400, 'message': 'Failed when parsing body as json'}
+[2024-03-26 11:39:43,960] [INFO] [srv] [resp] (POST /auth) {'description': 'Bad Request', 'status': 400, 'message': 'Failed when parsing body as json'}
+[2024-03-26 11:39:52,316] [INFO] [srv] [req] (POST /auth) {'id': 'root', 'password': 123456}
+[2024-03-26 11:39:52,317] [ERROR] Exception occurred while handling uri: 'http://localhost:8000/auth'
+Traceback (most recent call last):
+  File "handle_request", line 97, in handle_request
+    from sanic_ext.extensions.base import Extension  # type: ignore
+  File "/Volumes/学习/大二上/daershang/进阶式挑战项目/CloudDM/server.py", line 614, in auth
+    session = app.ctx.db.session()
+AttributeError: 'Session' object has no attribute 'session'
+[2024-03-26 11:39:52,321] [INFO] [srv] [resp] (POST /auth) {'description': 'Internal Server Error', 'status': 500, 'message': 'The application encountered an unexpected error and could not continue.'}
+[2024-03-26 11:42:00,637] [INFO] Stopping worker [13219]
+[2024-03-26 11:42:00,640] [INFO] Server Stopped
+[2024-03-26 11:42:00,641] [INFO] 127.0.0.1:8000 has initialized
+[2024-03-26 11:53:02,511] [ERROR] 数据库表创建失败: (psycopg2.OperationalError) could not translate host name "host" to address: nodename nor servname provided, or not known
+
+(Background on this error at: https://sqlalche.me/e/14/e3q8)
+[2024-03-26 11:53:02,583] [INFO] 
+  ┌─────────────────────────────────────────────────────────────────┐
+  │                          Sanic v23.3.0                          │
+  │                 Goin' Fast @ http://0.0.0.0:8000                │
+  ├───────────────────────┬─────────────────────────────────────────┤
+  │ [48;2;255;13;104m                     [0m │     mode: production, single worker     │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▄███ █████ ██    [0m │   server: sanic, HTTP/1.1               │
+  │ [38;2;255;255;255;48;2;255;13;104m   ██                [0m │   python: 3.10.9                        │
+  │ [38;2;255;255;255;48;2;255;13;104m    ▀███████ ███▄    [0m │ platform: macOS-10.16-x86_64-i386-64bit │
+  │ [38;2;255;255;255;48;2;255;13;104m                ██   [0m │ packages: sanic-routing==22.8.0         │
+  │ [38;2;255;255;255;48;2;255;13;104m   ████ ████████▀    [0m │                                         │
+  │ [48;2;255;13;104m                     [0m │                                         │
+  │ Build Fast. Run Fast. │                                         │
+  └───────────────────────┴─────────────────────────────────────────┘
+
+[2024-03-26 11:53:02,584] [WARNING] [01;33mSanic is running in PRODUCTION mode. Consider using '--debug' or '--dev' while actively developing your application.[0m
+[2024-03-26 11:53:02,616] [INFO] Starting worker [16646]
+[2024-03-26 11:53:18,005] [INFO] [srv] [req] (POST /v1/devices) {'name': 'device3', 'type': 'adapter', 'hardware_model': 'Raspberry Pi 8', 'hardware_sn': '8f93X874', 'software_version': '1.1', 'software_last_update': '2023/11/07', 'nic1_type': 'eth', 'nic1_mac': '13:68:fd:25:8e:a7', 'nic1_ipv4': '123.12.15.26', 'nic2_type': 'wifi', 'nic2_mac': '59:d4:2e:48:cb:22', 'nic2_ipv4': '156.36.45.32', 'status': 'off-line'}
+[2024-03-26 11:53:18,006] [ERROR] 'builtin_function_or_method' object has no attribute 'randint'
+[2024-03-26 11:53:18,008] [INFO] [srv] [resp] (POST /v1/devices) {'status': 0, 'message': "'builtin_function_or_method' object has no attribute 'randint'"}
+[2024-03-26 11:55:32,955] [INFO] Stopping worker [16646]
+[2024-03-26 11:55:32,956] [INFO] Server Stopped
+[2024-03-26 11:55:32,957] [INFO] 127.0.0.1:8000 has initialized

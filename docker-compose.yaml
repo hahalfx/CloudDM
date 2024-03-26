@@ -8,10 +8,10 @@ services:
       POSTGRES_USER: root # 设置数据库用户
       POSTGRES_PASSWORD: 123456 # 设置数据库用户密码
     ports:
-      - "5432:5432" # 映射端口
+      - "5433:5432" # 映射端口
 
-  CloudDM:
-    image: CloudDM # CloudDM 镜像名，确保已经构建或存在于某个可访问的 Docker registry 中
+  clouddm:
+    image: 9ca0f19b8569548fc2bba96451ea3a851438dd3dde2c054063868b4836290565 # CloudDM 镜像名，确保已经构建或存在于某个可访问的 Docker registry 中
     depends_on:
       - postgresdb # CloudDM 依赖于 postgresdb 服务
     ports:

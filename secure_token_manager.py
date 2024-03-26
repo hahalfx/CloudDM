@@ -32,13 +32,13 @@ class SecureTokenManager:
 
 
 # 使用示例
-token_manager = SecureTokenManager()
-device_id = "some_device_id"
+#token_manager = SecureTokenManager()
+#device_id = "some_device_id"
 # 生成令牌
-token = token_manager.generate_token(device_id)
-print(f"Generated token: {token}")
+#token = token_manager.generate_token(device_id)
+#print(f"Generated token: {token}")
 # 验证令牌
-print(f"Validated device ID: {token_manager.validate_token(token)}")
+#print(f"Validated device ID: {token_manager.validate_token(token)}")
 # 撤销令牌
-token_manager.revoke_token(token)
-print(f"Token revoked: {not token_manager.validate_token(token)}")
+#token_manager.revoke_token(token)
+#print(f"Token revoked: {not token_manager.validate_token(token)}")
